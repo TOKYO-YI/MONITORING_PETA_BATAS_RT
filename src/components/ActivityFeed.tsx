@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Upload } from 'lucide-react';
+import { Activity, Upload, EyeOff } from 'lucide-react';
 import { supabase, type PetaRow, type RtRow, type RtAssignmentRow } from '@/lib/supabase';
 
 type ActivityItem = {
@@ -15,6 +15,7 @@ type ActivityFeedProps = {
   petaList: PetaRow[];
   rtList: RtRow[];
   assignmentsByRt: Record<string, RtAssignmentRow[]>;
+  onHide?: () => void;
 };
 
 function timeAgo(dateStr: string): string {
@@ -29,7 +30,7 @@ function timeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('id-ID');
 }
 
-export function ActivityFeed({ petaList, rtList, assignmentsByRt }: ActivityFeedProps) {
+export function ActivityFeed({ petaList, rtList, assignmentsByRt, onHide }: ActivityFeedProps) {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const feedRef = useRef<HTMLDivElement>(null);
 
@@ -70,11 +71,22 @@ export function ActivityFeed({ petaList, rtList, assignmentsByRt }: ActivityFeed
 
   return (
     <div className="rounded-xl border border-white/40 bg-white/60 p-4 shadow-sm backdrop-blur-md dark:border-slate-700/50 dark:bg-slate-800/60">
-      <div className="mb-3 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-100 dark:bg-teal-900/30">
-          <Activity size={16} className="text-teal-600 dark:text-teal-400" />
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-100 dark:bg-teal-900/30">
+            <Activity size={16} className="text-teal-600 dark:text-teal-400" />
+          </div>
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Aktivitas Terkini</h3>
         </div>
-        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Aktivitas Terkini</h3>
+        {onHide && (
+          <button
+            onClick={onHide}
+            className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+            title="Sembunyikan"
+          >
+            <EyeOff size={14} />
+          </button>
+        )}
       </div>
 
       <div ref={feedRef} className="max-h-[400px] space-y-2 overflow-y-auto pr-1">

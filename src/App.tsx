@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   Map as MapIcon, Search, LogIn, LogOut, Shield, Download,
   CheckCircle2, Circle, Layers, Moon, Sun, Flame, ArrowUp, SearchX,
+  Eye, EyeOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase, type RtRow, type PetaRow, type RtAssignmentRow } from '@/lib/supabase';
@@ -39,6 +40,7 @@ export default function App() {
   const [detailRt, setDetailRt] = useState<RtRow | null>(null);
   const [loginOpen, setLoginOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [activityVisible, setActivityVisible] = useState(true);
 
   const fetchData = useCallback(async () => {
     const [{ data: rts, error: rtError }, { data: petas, error: petaError }, { data: assignments, error: assignError }] = await Promise.all([
@@ -435,7 +437,17 @@ export default function App() {
           {/* Sidebar — Activity Feed (desktop only) */}
           <aside className="hidden w-72 shrink-0 lg:block">
             <div className="sticky top-24">
-              <ActivityFeed petaList={allPetas} rtList={rtList} assignmentsByRt={assignmentsByRt} />
+              {activityVisible ? (
+                <ActivityFeed petaList={allPetas} rtList={rtList} assignmentsByRt={assignmentsByRt} onHide={() => setActivityVisible(false)} />
+              ) : (
+                <button
+                  onClick={() => setActivityVisible(true)}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/40 bg-white/60 px-4 py-3 text-sm font-medium text-slate-600 shadow-sm backdrop-blur-md transition hover:bg-white/80 active:scale-95 dark:border-slate-700/50 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:bg-slate-800/80"
+                >
+                  <Eye size={16} />
+                  Tampilkan Aktivitas Terkini
+                </button>
+              )}
             </div>
           </aside>
         </div>
